@@ -1,0 +1,219 @@
+---
+swagger: 2.0
+info:
+  title: users
+  version: 1.0.0
+paths:
+  /users:
+    get:
+      description: Get a set of users.
+      operationId: searchUsers
+      parameters:
+      - name: start
+        in: query
+        required: false
+        type: integer
+        format: int64
+        default: 0
+        minimum: 0
+      - name: count
+        in: query
+        required: false
+        type: integer
+        format: int32
+        default: 20
+        maximum: 100
+        minimum: 1
+      - name: filterEmail
+        in: query
+        type: string
+      responses:
+        200:
+          description: Found set of the users.
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/user'
+        404:
+          description: Could not find any users.
+          schema:
+            $ref: '#/definitions/error'
+    post:
+      description: Add a new user.
+      operationId: createUser
+      parameters:
+      - name: body
+        in: body
+        schema:
+          $ref: '#/definitions/userProto'
+      responses:
+        201:
+          description: New user created.
+          schema:
+            $ref: '#/definitions/user'
+  /users/{id}:
+    get:
+      description: id of the user to read/update/delete.
+      operationId: getUser
+      parameters:
+      - name: id
+        in: path
+        description: id of the user to read/update/delete.
+        required: true
+        type: integer
+        format: int64
+      responses:
+        200:
+          description: Found the user.
+          schema:
+            $ref: '#/definitions/user'
+        404:
+          description: Could not find the user.
+          schema:
+            $ref: '#/definitions/error'
+    put:
+      operationId: updateUser
+      parameters:
+      - name: body
+        in: body
+        schema:
+          $ref: '#/definitions/user'
+      responses:
+        201:
+          description: Record updated.
+    delete:
+      operationId: deleteUser
+      responses:
+        200:
+          description: Successfully deleted the user.
+    parameters:
+    - name: id
+      in: path
+      description: id of the user to read/update/delete.
+      required: true
+      type: integer
+      format: int64
+  /users/ux:
+    get:
+      description: Get a set of users.
+      parameters:
+      - name: start
+        in: query
+        required: false
+        type: integer
+        format: int64
+        default: 0
+        minimum: 0
+      - name: count
+        in: query
+        required: false
+        type: integer
+        format: int32
+        default: 20
+        maximum: 100
+        minimum: 1
+      - name: filterEmail
+        in: query
+        type: string
+      responses:
+        200:
+          description: Found set of the users.
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/user'
+        404:
+          description: Could not find any users.
+          schema:
+            $ref: '#/definitions/error'
+    post:
+      description: Add a new user.
+      parameters:
+      - name: body
+        in: body
+        schema:
+          $ref: '#/definitions/userProto'
+      responses:
+        201:
+          description: New user created.
+          schema:
+            $ref: '#/definitions/user'
+  /users/ux/verify:
+    get:
+      description: Verify individual field.
+      operationId: verifyUserField
+      parameters:
+      - name: email
+        in: query
+        description: Verify first email.
+        type: string
+      - name: firstname
+        in: query
+        description: Verify first name.
+        type: string
+      - name: lastname
+        in: query
+        description: Verify last name.
+        type: string
+      responses:
+        200:
+          description: Success - field is correct.
+          schema:
+            $ref: '#/definitions/verification'
+    post:
+      summary: Verify Prototype User
+      operationId: verifyUserProto
+      parameters:
+      - name: body
+        in: body
+        schema:
+          $ref: '#/definitions/userProto'
+      responses:
+        200:
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/verification'
+definitions:
+  user:
+    title: Root Type for user
+    description: The root of the user type's schema.
+    type: object
+    properties:
+      id:
+        format: int64
+        type: integer
+      firstname:
+        type: string
+      lastname:
+        type: string
+      email:
+        type: string
+  error:
+    title: Root Type for error
+    description: The root of the error type's schema.
+    type: object
+    properties:
+      code:
+        format: int32
+        type: integer
+      description:
+        type: string
+  userProto:
+    title: Root Type for proto-user
+    description: The root of the proto-user type's schema.
+    type: object
+    properties:
+      firstname:
+        type: string
+      lastname:
+        type: string
+      email:
+        type: string
+  verification:
+    properties:
+      result:
+        format: int32
+        type: integer
+      description:
+        type: string
